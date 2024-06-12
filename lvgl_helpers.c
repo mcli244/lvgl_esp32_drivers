@@ -216,7 +216,7 @@ bool lvgl_spi_driver_init(int host,
     };
 #endif
 
-    ESP_LOGI(TAG, "Configuring SPI host %s (%d)", spi_names[host], host);
+    // ESP_LOGI(TAG, "Configuring SPI host %s (%d)", spi_names[host], host);
     ESP_LOGI(TAG, "MISO pin: %d, MOSI pin: %d, SCLK pin: %d, IO2/WP pin: %d, IO3/HD pin: %d",
         miso_pin, mosi_pin, sclk_pin, quadwp_pin, quadhd_pin);
 
@@ -232,6 +232,10 @@ bool lvgl_spi_driver_init(int host,
     };
 
     ESP_LOGI(TAG, "Initializing SPI bus...");
+#if defined(CONFIG_IDF_TARGET_ESP32S3)
+    buscfg.max_transfer_sz = 81920;
+    dma_channel = SPI_DMA_CH_AUTO;
+#endif
     esp_err_t ret = spi_bus_initialize(host, &buscfg, dma_channel);
     assert(ret == ESP_OK);
 
